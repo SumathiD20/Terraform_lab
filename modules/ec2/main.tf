@@ -4,7 +4,7 @@
 # Security group for Public EC2 Instance
 
 resource "aws_security_group" "Lab1FridayHITTPublicEC2InstanceSGrp" {
-    vpc_id = aws_vpc.Lab1FridayHITTVPC.id
+    vpc_id = var.vpc_id
     description = "Allow SSH login to Public EC2 instance"
 
     ingress {
@@ -40,7 +40,7 @@ resource "aws_security_group" "Lab1FridayHITTPublicEC2InstanceSGrp" {
 # Security Group for the Private EC2 instance in private subnet
 
 resource "aws_security_group" "Lab1FridayHITTPrivateEC2InstanceSGrp" {
-    vpc_id = aws_vpc.Lab1FridayHITTVPC.id
+    vpc_id = var.vpc_id
     description = "Allow SSH from the Jump Box from public subnet"
 
     ingress {                                                    #Allow SSH from jump box
@@ -67,7 +67,7 @@ resource "aws_security_group" "Lab1FridayHITTPrivateEC2InstanceSGrp" {
 # Security group for Jump box in public subnet
 
 resource "aws_security_group" "Lab1FridayHITTJumpBoxSGrp" {
-    vpc_id = aws_vpc.Lab1FridayHITTVPC.id
+    vpc_id = var.vpc_id
     description = "Allow SSH to the jump host for specific IP range"
 
     ingress {
@@ -95,9 +95,9 @@ resource "aws_security_group" "Lab1FridayHITTJumpBoxSGrp" {
 resource "aws_instance" "Lab1FridayHITTPublicEC2Instance" {
     instance_type = var.InstanstanceType
     key_name = var.KeyNameEC2
-    ami = lookup(var.region_map, var.region)["AMI"]
-    subnet_id = aws_subnet.Lab1FridayHITTPublicSubnet.id
-    security_groups = [aws_security_group.Lab1FridayHITTPublicEC2InstanceSGrp.name]
+    ami = var.ami_id
+    subnet_id = var.public_subnet
+    vpc_security_group_ids = [aws_security_group.Lab1FridayHITTPublicEC2InstanceSGrp.id]
     tags = {
       Name = "Lab2-PublicEC2Instance"
     
@@ -109,9 +109,9 @@ resource "aws_instance" "Lab1FridayHITTPublicEC2Instance" {
 resource "aws_instance" "Lab1FridayHITTPrivateEC2Instance" {
     instance_type = var.InstanstanceType
     key_name = var.KeyNameEC2
-    ami = lookup(var.region_map, var.region)["AMI"]
-    subnet_id = aws_subnet.Lab1FridayHITTPrivateSubnet.id
-    security_groups = [aws_security_group.Lab1FridayHITTPrivateEC2InstanceSGrp.name]
+    ami = var.ami_id
+    subnet_id = var.private_subet
+    vpc_security_group_ids = [aws_security_group.Lab1FridayHITTPrivateEC2InstanceSGrp.id]
     tags = {
       Name = "Lab2-PrivateEC2Instance"
     
@@ -121,11 +121,11 @@ resource "aws_instance" "Lab1FridayHITTPrivateEC2Instance" {
 
 # Jump Host Instance
 resource "aws_instance" "Lab1FridayHITTJumpBox" {
-  ami             = lookup(var.region_map, var.region)["AMI"]
+  ami             = var.ami_id
   instance_type   = var.InstanstanceType
   key_name        = var.KeyNameEC2
-  subnet_id       = aws_subnet.Lab1FridayHITTPublicSubnet.id
-  security_groups = [aws_security_group.Lab1FridayHITTJumpBoxSGrp.name]
+  subnet_id       = var.public_subnet
+  vpc_security_group_ids = [aws_security_group.Lab1FridayHITTJumpBoxSGrp.id]
 
   tags = {
     Name = "Lab2-JumpBox"

@@ -20,3 +20,11 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+#tfvar state file
+terraform.tfvars
+#terraform lock
+.terraform.lock.hcl
+#terraform tf state
+terraform.tfstate*
+# directory
+.terraform

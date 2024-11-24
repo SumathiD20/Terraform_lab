@@ -1,4 +1,10 @@
 
+# Data resource to fetch availability zones
+data "aws_availability_zones" "available" {
+  state = "available"
+
+}
+
 #Creating Virtual private cloud (VPC) for FridayHITT company
 
 resource "aws_vpc" "Lab1FridayHITTVPC" {
