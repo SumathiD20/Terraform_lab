@@ -30,7 +30,14 @@ resource "aws_security_group" "Lab1FridayHITTPublicEC2InstanceSGrp" {
         to_port = 0
         protocol = "icmp"
         cidr_blocks = ["10.24.1.0/24"]
-    }
+   }
+   egress {
+    description = "All outbound rules outside"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [ "0.0.0.0/0" ]
+   }
     tags = {
         Name = "Lab2-PublicEC2SGrp"
     }
@@ -81,6 +88,12 @@ resource "aws_security_group" "Lab1FridayHITTJumpBoxSGrp" {
         from_port = 8
         to_port = 0
         protocol = "icmp"
+        cidr_blocks = [ "0.0.0.0/0" ]
+    }
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
         cidr_blocks = [ "0.0.0.0/0" ]
     }
     tags = {
